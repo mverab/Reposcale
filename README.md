@@ -76,24 +76,50 @@ Each task can be evaluated under different modes to isolate specific capabilitie
 ## Repository structure
 
 ```text
+src/reposcale/  core Python package (validate, run, score, summary, CLI)
 docs/           design specs and governance documents
 cases/          benchmark case packs organized by track
 schemas/        JSON schemas for cases, responses, and evaluations
 prompts/        task and judge prompts
-scripts/        validation and execution tooling
+scripts/        thin wrappers around core logic
+tests/          pytest suite
+results/        evaluation outputs (gitignored)
 ```
 
 ## Project status
 
-RepoScale is in **early design / bootstrap phase** (Phase 0).
+RepoScale is in **Phase 1 — MVP pipeline**.
 
 Current goals:
 - [x] Define the capability model
 - [x] Publish the task taxonomy
-- [ ] Define base schemas (case, response, evaluation)
+- [x] Define base schemas (case, response, evaluation)
+- [x] Ship validation, runner, scoring, and summary pipeline
+- [x] Seed cases for Diagnose, Intent, and Plan tracks
 - [ ] Release the first 10–15 curated cases
-- [ ] Ship the first scoring pipeline
 - [ ] Establish baseline results across models
+
+## Quickstart
+
+```bash
+# Install
+pip install -e .
+
+# Validate case packs
+reposcale validate cases/diagnose/diagnose-001/
+
+# Run evaluation (dry-run — prints the assembled prompt)
+reposcale run cases/diagnose/diagnose-001/ --model gpt-4o --dry-run
+
+# Run evaluation (requires LLM API key, e.g. OPENAI_API_KEY)
+reposcale run cases/diagnose/diagnose-001/ --model gpt-4o
+
+# Score responses (structural + heuristic; add --judge-model for LLM judge)
+reposcale score results/<run-id>/
+
+# View summary
+reposcale summary results/<run-id>/
+```
 
 ## Contributing
 

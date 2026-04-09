@@ -58,6 +58,6 @@
 ## 8. Integration and verification
 
 - [x] 8.1 Run full pipeline end-to-end on one seed case: validate → run (dry-run) → verify prompt output — manual verification
-- [x] 8.2 Run full pipeline with real model call on one seed case: validate → run → score → summary — manual verification
-- [x] 8.3 Verify all output files conform to their respective JSON schemas — modifies `tests/test_validate.py`
-- [ ] 8.4 Update `README.md` with quickstart instructions for the pipeline — modifies `README.md`
+- [ ] 8.2 Run full pipeline with real model call on one seed case: validate → run → score → summary — manual verification
+- [ ] 8.3 Verify all output files conform to their respective JSON schemas — modifies `tests/test_validate.py`
+- [x] 8.4 Update `README.md` with quickstart instructions for the pipeline — modifies `README.md`
