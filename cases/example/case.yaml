@@ -1,0 +1,20 @@
+id: "diagnose-000"
+track: "diagnose"
+title: "Example case — Incomplete task management CLI"
+description: "A Python CLI for task management with partial implementation. Authentication is defined but never wired. Database migrations are missing. Tests exist for only one module."
+case_type: "mvp_incomplete"
+difficulty: "easy"
+tags: ["python", "cli", "example"]
+repo_source: "snapshot"
+supported_modes:
+  - prompt_only
+  - read_only_repo
+supported_sections:
+  - project_summary
+  - what_exists
+  - what_is_missing
+  - what_is_broken
+  - technical_debt
+  - recommendations
+created_at: "2025-01-15"
+version: "1.0"

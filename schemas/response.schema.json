@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reposcale.dev/schemas/response.schema.json",
+  "title": "RepoScale Response",
+  "description": "Schema for a model or agent response to a RepoScale benchmark case.",
+  "type": "object",
+  "required": ["case_id", "track", "mode", "model", "sections", "timestamp"],
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "description": "ID of the case this response answers."
+    },
+    "track": {
+      "type": "string",
+      "enum": ["diagnose", "intent", "plan", "extend", "implement", "agent"],
+      "description": "Track the response belongs to."
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["prompt_only", "read_only_repo", "history_aware", "tool_augmented", "agentic_budgeted", "full_continuation"],
+      "description": "Execution mode used for this response."
+    },
+    "model": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Model identifier (e.g. 'gpt-4o', 'claude-sonnet-4-20250514')."
+        },
+        "provider": {
+          "type": "string",
+          "description": "Provider or API used."
+        },
+        "version": {
+          "type": "string",
+          "description": "Specific model version or checkpoint."
+        },
+        "agent_framework": {
+          "type": "string",
+          "description": "If agentic mode, which framework was used."
+        }
+      },
+      "additionalProperties": false
+    },
+    "sections": {
+      "type": "object",
+      "description": "Response sections keyed by section name. Must include all expected_sections from the case.",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["content"],
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "The textual content of this section."
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": ["file", "commit", "doc", "test", "config", "other"],
+                  "description": "Type of evidence referenced."
+                },
+                "ref": {
+                  "type": "string",
+                  "description": "Reference path, hash, or identifier."
+                },
+                "quote": {
+                  "type": "string",
+                  "description": "Optional direct quote from the source."
+                }
+              },
+              "required": ["type", "ref"]
+            },
+            "description": "Evidence supporting claims in this section."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "path"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["diff", "patch", "test", "plan", "ticket", "log", "other"],
+            "description": "Type of artifact produced."
+          },
+          "path": {
+            "type": "string",
+            "description": "Path to the artifact file relative to the response directory."
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of the artifact."
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Artifacts produced by the model (diffs, patches, tests, etc.)."
+    },
+    "agentic_trace": {
+      "type": "object",
+      "properties": {
+        "steps": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of agentic steps taken."
+        },
+        "tools_used": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of tools invoked during the run."
+        },
+        "files_read": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Files inspected during the run."
+        },
+        "files_modified": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Files modified during the run."
+        },
+        "token_usage": {
+          "type": "integer",
+          "description": "Total tokens consumed."
+        }
+      },
+      "additionalProperties": false,
+      "description": "Trace data for agentic execution modes."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of when the response was generated."
+    },
+    "run_duration_seconds": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Wall-clock time for the run in seconds."
+    }
+  },
+  "additionalProperties": false
+}

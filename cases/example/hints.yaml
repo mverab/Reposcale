@@ -1,0 +1,13 @@
+known_gaps:
+  - "Authentication middleware is defined in src/auth.py but never imported or applied"
+  - "Database migration scripts are referenced in README but do not exist"
+  - "Only src/tasks.py has test coverage; src/users.py and src/auth.py have none"
+original_intent: "A CLI-based task management tool with user accounts and team collaboration"
+key_files:
+  - "src/tasks.py"
+  - "src/users.py"
+  - "src/auth.py"
+  - "README.md"
+expected_difficulty_areas:
+  - "Distinguishing placeholder code in auth.py from real implementation"
+  - "Noticing that README describes features not present in code"

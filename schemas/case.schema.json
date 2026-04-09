@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reposcale.dev/schemas/case.schema.json",
+  "title": "RepoScale Case",
+  "description": "Schema for a RepoScale benchmark case pack metadata file (case.yaml).",
+  "type": "object",
+  "required": ["id", "track", "title", "description", "case_type", "difficulty", "repo_source", "supported_modes", "expected_sections", "version"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z]+-[0-9]{3}$",
+      "description": "Unique case identifier in the format '<track>-<number>', e.g. 'diagnose-001'."
+    },
+    "track": {
+      "type": "string",
+      "enum": ["diagnose", "intent", "plan", "extend", "implement", "agent"],
+      "description": "The evaluation track this case belongs to."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 120,
+      "description": "Human-readable title for the case."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Brief description of the repo and what the case tests."
+    },
+    "case_type": {
+      "type": "string",
+      "enum": ["mvp_incomplete", "divergent_beta", "inflated_scaffold", "functional_not_scalable", "eroded_repo"],
+      "description": "Category of the case. See docs/dataset_format.md for definitions."
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": ["easy", "medium", "hard"],
+      "description": "Estimated difficulty level."
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Free-form tags for filtering (e.g. language, domain, patterns)."
+    },
+    "repo_source": {
+      "type": "string",
+      "enum": ["snapshot", "git_url", "archive"],
+      "description": "How the repo is provided in this case pack."
+    },
+    "supported_modes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["prompt_only", "read_only_repo", "history_aware", "tool_augmented", "agentic_budgeted", "full_continuation"]
+      },
+      "minItems": 1,
+      "description": "Execution modes this case supports."
+    },
+    "expected_sections": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Sections the model response should contain."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the case was created (ISO 8601)."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$",
+      "description": "Case version in semver-lite format (e.g. '1.0')."
+    }
+  },
+  "additionalProperties": false
+}

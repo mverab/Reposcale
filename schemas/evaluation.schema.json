@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reposcale.dev/schemas/evaluation.schema.json",
+  "title": "RepoScale Evaluation",
+  "description": "Schema for evaluation results of a RepoScale response.",
+  "type": "object",
+  "required": ["case_id", "response_id", "track", "scores", "layers", "timestamp"],
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "description": "ID of the evaluated case."
+    },
+    "response_id": {
+      "type": "string",
+      "description": "Unique identifier for the response being evaluated."
+    },
+    "track": {
+      "type": "string",
+      "enum": ["diagnose", "intent", "plan", "extend", "implement", "agent"]
+    },
+    "scores": {
+      "type": "object",
+      "description": "Primary metric scores (0.0 to 1.0).",
+      "properties": {
+        "project_understanding": { "$ref": "#/$defs/score" },
+        "evidence_grounding": { "$ref": "#/$defs/score" },
+        "intent_reconstruction": { "$ref": "#/$defs/score" },
+        "gap_detection": { "$ref": "#/$defs/score" },
+        "useful_creativity": { "$ref": "#/$defs/score" },
+        "prioritization": { "$ref": "#/$defs/score" },
+        "architectural_coherence": { "$ref": "#/$defs/score" },
+        "actionability": { "$ref": "#/$defs/score" }
+      },
+      "additionalProperties": { "$ref": "#/$defs/score" }
+    },
+    "secondary_scores": {
+      "type": "object",
+      "description": "Secondary metric scores.",
+      "properties": {
+        "hallucination_rate": { "$ref": "#/$defs/score" },
+        "genericity_rate": { "$ref": "#/$defs/score" },
+        "rewrite_bias": { "$ref": "#/$defs/score" },
+        "history_sensitivity": { "$ref": "#/$defs/score" },
+        "run_stability": { "$ref": "#/$defs/score" },
+        "agentic_dependency": { "$ref": "#/$defs/score" }
+      },
+      "additionalProperties": { "$ref": "#/$defs/score" }
+    },
+    "layers": {
+      "type": "object",
+      "description": "Results from each scoring layer.",
+      "properties": {
+        "structural": {
+          "type": "object",
+          "properties": {
+            "format_valid": { "type": "boolean" },
+            "sections_complete": { "type": "boolean" },
+            "evidence_marked": { "type": "boolean" },
+            "notes": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "heuristic": {
+          "type": "object",
+          "properties": {
+            "file_reference_density": { "type": "number" },
+            "genericity_score": { "type": "number" },
+            "prioritization_present": { "type": "boolean" },
+            "notes": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "llm_judge": {
+          "type": "object",
+          "properties": {
+            "judge_model": { "type": "string" },
+            "overall_score": { "type": "number", "minimum": 0, "maximum": 1 },
+            "rationale": { "type": "string" },
+            "dimension_scores": {
+              "type": "object",
+              "additionalProperties": { "$ref": "#/$defs/score" }
+            }
+          },
+          "additionalProperties": false
+        },
+        "execution": {
+          "type": "object",
+          "properties": {
+            "compiles": { "type": "boolean" },
+            "tests_pass": { "type": "boolean" },
+            "regressions": { "type": "boolean" },
+            "plan_aligned": { "type": "boolean" },
+            "notes": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "human": {
+          "type": "object",
+          "properties": {
+            "reviewer": { "type": "string" },
+            "overall_score": { "type": "number", "minimum": 0, "maximum": 1 },
+            "notes": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "composite_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Weighted composite score across all dimensions."
+    },
+    "notes": {
+      "type": "string",
+      "description": "Free-form evaluator notes."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Score normalized to 0.0–1.0 range."
+    }
+  }
+}
