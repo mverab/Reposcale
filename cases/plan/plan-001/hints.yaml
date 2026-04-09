@@ -1,0 +1,17 @@
+known_gaps:
+  - "JSON file storage cannot handle concurrent writes or scale beyond trivial usage"
+  - "No authentication or API keys — anyone can create/delete links"
+  - "No rate limiting — vulnerable to abuse"
+  - "No analytics or click tracking despite README mentioning it as planned"
+  - "No input validation on URLs — accepts any string"
+  - "No tests at all"
+  - "Hardcoded port and host in main.py"
+original_intent: "A simple, self-hosted URL shortener API with click analytics"
+key_files:
+  - "app.py"
+  - "storage.py"
+  - "README.md"
+expected_difficulty_areas:
+  - "Identifying the right scaling priorities (storage first vs auth first vs analytics first)"
+  - "Avoiding the temptation to suggest a full rewrite — the core logic works"
+  - "Proposing a realistic migration path from JSON to database without downtime"

@@ -1,0 +1,18 @@
+known_gaps:
+  - "README describes WebSocket-based real-time dashboard but no WebSocket code exists"
+  - "Original intent was real-time analytics; code now implements batch CSV export"
+  - "app/realtime.py exists but is empty — artifact of the abandoned direction"
+  - "requirements.txt includes 'websockets' package that is never imported"
+  - "CHANGELOG.md shows v0.2 pivot from 'live dashboard' to 'scheduled reports'"
+original_intent: "A real-time web analytics dashboard showing live visitor metrics via WebSocket streams, later pivoted to a batch reporting tool that generates CSV/PDF reports on a schedule"
+key_files:
+  - "README.md"
+  - "CHANGELOG.md"
+  - "app/reports.py"
+  - "app/realtime.py"
+  - "app/main.py"
+  - "requirements.txt"
+expected_difficulty_areas:
+  - "Recognizing the pivot from real-time to batch by cross-referencing README, CHANGELOG, and code"
+  - "Distinguishing abandoned code (realtime.py) from active code (reports.py)"
+  - "Noticing the orphaned websockets dependency"

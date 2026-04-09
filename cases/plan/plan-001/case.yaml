@@ -1,0 +1,19 @@
+id: "plan-001"
+track: "plan"
+title: "Functional but not scalable URL shortener"
+description: "A working URL shortener API that handles basic CRUD but stores everything in a JSON file, has no auth, no rate limiting, and no analytics. Works for a single user but cannot scale to production use."
+case_type: "functional_not_scalable"
+difficulty: "medium"
+tags: ["python", "api", "fastapi", "scaling"]
+repo_source: "snapshot"
+supported_modes:
+  - prompt_only
+  - read_only_repo
+expected_sections:
+  - current_state_assessment
+  - strategic_direction
+  - phased_roadmap
+  - first_sprint
+  - what_to_avoid
+created_at: "2025-01-17"
+version: "1.0"

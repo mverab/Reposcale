@@ -1,0 +1,20 @@
+id: "intent-001"
+track: "intent"
+title: "Pivoted analytics dashboard"
+description: "A web analytics project that started as a real-time dashboard but pivoted mid-development toward a batch reporting tool. README still describes the real-time vision. Code reflects the pivot. Commit messages show the transition."
+case_type: "divergent_beta"
+difficulty: "medium"
+tags: ["python", "analytics", "pivot", "fastapi"]
+repo_source: "snapshot"
+supported_modes:
+  - prompt_only
+  - read_only_repo
+  - history_aware
+expected_sections:
+  - inferred_intent
+  - evidence_for_intent
+  - fulfillment_assessment
+  - deviations_and_pivots
+  - unfulfilled_potential
+created_at: "2025-01-16"
+version: "1.0"
