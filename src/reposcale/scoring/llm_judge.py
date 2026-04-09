@@ -55,23 +55,53 @@ class LLMJudgeScorer(Scorer):
     def _build_judge_prompt(self, case: dict, response: dict) -> str:
         judge_template = (PROMPTS_DIR / "judge.md").read_text()
 
-        case_context = yaml.dump(case, default_flow_style=False)
+        case_clean = {k: v for k, v in case.items() if not k.startswith("_")}
+        hints = case_clean.pop("hints", {})
+        case_context = yaml.dump(case_clean, default_flow_style=False)
 
         response_text = ""
         for key, section_data in response.get("sections", {}).items():
             response_text += f"\n## {key}\n{section_data.get('content', '')}\n"
 
-        hints_text = ""
-        if "hints" in response:
-            hints_text = yaml.dump(response["hints"], default_flow_style=False)
+        hints_text = yaml.dump(hints, default_flow_style=False) if hints else "No hints available."
+
+        repo_summary = self._build_repo_summary(case)
 
         return (
             f"{judge_template}\n\n---\n\n"
             f"## Case metadata\n```yaml\n{case_context}```\n\n"
+            f"## Repository context\n{repo_summary}\n\n"
             f"## Model response\n{response_text}\n\n"
             f"## Evaluation hints\n```yaml\n{hints_text}```\n\n"
             f"Please provide your evaluation as a JSON object following the output format in the rubric."
         )
+
+    @staticmethod
+    def _build_repo_summary(case: dict) -> str:
+        from pathlib import Path as P
+        case_dir = case.get("_case_dir")
+        if not case_dir:
+            return "Repository context not available."
+
+        case_path = P(case_dir)
+        parts = []
+
+        tree_file = case_path / "tree.txt"
+        if tree_file.exists():
+            parts.append(f"### File tree\n```\n{tree_file.read_text().strip()}\n```")
+
+        repo_dir = case_path / "repo"
+        if repo_dir.is_dir():
+            for f in sorted(repo_dir.rglob("*")):
+                if f.is_file() and f.stat().st_size < 8192:
+                    rel = f.relative_to(repo_dir)
+                    try:
+                        content = f.read_text()
+                        parts.append(f"### {rel}\n```\n{content.strip()}\n```")
+                    except UnicodeDecodeError:
+                        continue
+
+        return "\n\n".join(parts) if parts else "Repository context not available."
 
     def _invoke_judge(self, prompt: str) -> str:
         result = litellm.completion(
@@ -113,4 +143,7 @@ class LLMJudgeScorer(Scorer):
             "overall_score": float(data.get("overall_score", 0.0)),
             "rationale": data.get("rationale", ""),
             "dimension_scores": dimension_scores,
+            "hallucinations": data.get("hallucinations", []),
+            "strengths": data.get("strengths", []),
+            "weaknesses": data.get("weaknesses", []),
         }

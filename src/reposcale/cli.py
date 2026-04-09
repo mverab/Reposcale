@@ -137,7 +137,13 @@ def _find_case(case_id: str, track: str) -> dict | None:
         case_file = case_dir / "case.yaml"
         if case_file.exists():
             with open(case_file) as f:
-                return yaml.safe_load(f)
+                data = yaml.safe_load(f)
+            data["_case_dir"] = str(case_dir)
+            hints_file = case_dir / "hints.yaml"
+            if hints_file.exists():
+                with open(hints_file) as f:
+                    data["hints"] = yaml.safe_load(f)
+            return data
     return None
 
 
