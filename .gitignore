@@ -30,6 +30,10 @@ outputs/
 *.jsonl
 !cases/**/*.jsonl
 
+# Environment / secrets
+.env
+.env.*
+
 # Temporary
 *.tmp
 *.log
