@@ -1,0 +1,17 @@
+schema: spec-driven
+
+context: |
+  Project: RepoScale — open-source eval suite for codebase continuation intelligence.
+  Tech stack: Python 3.10+, jsonschema, PyYAML, Rich (CLI output).
+  Domain: LLM evaluation / benchmark design.
+  Conventions: Conventional Commits, JSON Schema Draft 2020-12.
+  Key directories: docs/, schemas/, prompts/, cases/, scripts/.
+  Current phase: Phase 0 (definition) → entering Phase 1 (MVP with Diagnose, Intent, Plan tracks).
+
+rules:
+  proposal:
+    - Always include a "Non-goals" section
+    - Reference specific existing files/schemas when proposing changes
+  tasks:
+    - Break tasks into chunks of max 2 hours
+    - Each task must specify which files it modifies
