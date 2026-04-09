@@ -130,20 +130,31 @@ def _find_case(case_id: str, track: str) -> dict | None:
     from reposcale.config import CASES_DIR
     import yaml
 
+    def _load(case_dir: Path) -> dict | None:
+        case_file = case_dir / "case.yaml"
+        if not case_file.exists():
+            return None
+        with open(case_file) as f:
+            data = yaml.safe_load(f)
+        data["_case_dir"] = str(case_dir)
+        hints_file = case_dir / "hints.yaml"
+        if hints_file.exists():
+            with open(hints_file) as f:
+                data["hints"] = yaml.safe_load(f)
+        return data
+
+    if track:
+        direct = CASES_DIR / track / case_id
+        result = _load(direct)
+        if result:
+            return result
+
     for track_dir in CASES_DIR.iterdir():
         if not track_dir.is_dir():
             continue
-        case_dir = track_dir / case_id
-        case_file = case_dir / "case.yaml"
-        if case_file.exists():
-            with open(case_file) as f:
-                data = yaml.safe_load(f)
-            data["_case_dir"] = str(case_dir)
-            hints_file = case_dir / "hints.yaml"
-            if hints_file.exists():
-                with open(hints_file) as f:
-                    data["hints"] = yaml.safe_load(f)
-            return data
+        result = _load(track_dir / case_id)
+        if result:
+            return result
     return None
 
 

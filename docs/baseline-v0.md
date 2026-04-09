@@ -58,6 +58,12 @@
 
 ## Results — LLM Judge (judge: gpt-4o, temperature 0.1)
 
+> **⚠ Evaluator-leaky comparison.** gpt-4o serves as both candidate and judge here.
+> The gpt-4o column is effectively self-evaluated and should **not** be compared
+> directly against gpt-4o-mini. These scores are valid for internal calibration
+> (verifying the judge pipeline works) but not for neutral benchmarking.
+> For a fair cross-model comparison, use an independent judge model.
+
 ### Composite scores
 
 | Case | Track | gpt-4o-mini | gpt-4o |

@@ -76,6 +76,9 @@ class LLMJudgeScorer(Scorer):
             f"Please provide your evaluation as a JSON object following the output format in the rubric."
         )
 
+    MAX_REPO_FILES = 20
+    MAX_REPO_BYTES = 32_000
+
     @staticmethod
     def _build_repo_summary(case: dict) -> str:
         from pathlib import Path as P
@@ -85,21 +88,33 @@ class LLMJudgeScorer(Scorer):
 
         case_path = P(case_dir)
         parts = []
+        budget = LLMJudgeScorer.MAX_REPO_BYTES
 
         tree_file = case_path / "tree.txt"
         if tree_file.exists():
-            parts.append(f"### File tree\n```\n{tree_file.read_text().strip()}\n```")
+            tree_text = tree_file.read_text().strip()
+            parts.append(f"### File tree\n```\n{tree_text}\n```")
+            budget -= len(tree_text)
 
         repo_dir = case_path / "repo"
         if repo_dir.is_dir():
+            files_added = 0
             for f in sorted(repo_dir.rglob("*")):
-                if f.is_file() and f.stat().st_size < 8192:
-                    rel = f.relative_to(repo_dir)
-                    try:
-                        content = f.read_text()
-                        parts.append(f"### {rel}\n```\n{content.strip()}\n```")
-                    except UnicodeDecodeError:
-                        continue
+                if files_added >= LLMJudgeScorer.MAX_REPO_FILES or budget <= 0:
+                    break
+                if not f.is_file() or f.stat().st_size > 8192:
+                    continue
+                rel = f.relative_to(repo_dir)
+                try:
+                    content = f.read_text()
+                except UnicodeDecodeError:
+                    continue
+                chunk = f"### {rel}\n```\n{content.strip()}\n```"
+                if len(chunk) > budget:
+                    break
+                parts.append(chunk)
+                budget -= len(chunk)
+                files_added += 1
 
         return "\n\n".join(parts) if parts else "Repository context not available."
 
