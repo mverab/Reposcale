@@ -1,0 +1,51 @@
+[
+  {
+    "hash": "a3f8c21",
+    "author": "dev@livemetrics.io",
+    "date": "2024-12-01T10:00:00Z",
+    "message": "feat: add PDF report generation",
+    "files_changed": ["app/reports.py", "requirements.txt"]
+  },
+  {
+    "hash": "b7e2d14",
+    "author": "dev@livemetrics.io",
+    "date": "2024-11-15T14:30:00Z",
+    "message": "chore: remove unused dashboard templates",
+    "files_changed": ["templates/"]
+  },
+  {
+    "hash": "c9a1f03",
+    "author": "dev@livemetrics.io",
+    "date": "2024-10-15T09:00:00Z",
+    "message": "feat: pivot to batch reports, add CSV export",
+    "files_changed": ["app/reports.py", "app/main.py", "CHANGELOG.md"]
+  },
+  {
+    "hash": "d4b6e92",
+    "author": "dev@livemetrics.io",
+    "date": "2024-10-14T16:00:00Z",
+    "message": "chore: pause websocket streaming work",
+    "files_changed": ["app/realtime.py"]
+  },
+  {
+    "hash": "e5c7f81",
+    "author": "dev@livemetrics.io",
+    "date": "2024-09-01T11:00:00Z",
+    "message": "feat: start websocket streaming prototype",
+    "files_changed": ["app/realtime.py", "requirements.txt"]
+  },
+  {
+    "hash": "f6d8a70",
+    "author": "dev@livemetrics.io",
+    "date": "2024-08-15T08:00:00Z",
+    "message": "feat: basic data aggregation for events",
+    "files_changed": ["app/ingest.py"]
+  },
+  {
+    "hash": "a1b2c3d",
+    "author": "dev@livemetrics.io",
+    "date": "2024-08-01T10:00:00Z",
+    "message": "feat: initial event ingestion API",
+    "files_changed": ["app/main.py", "app/ingest.py", "README.md"]
+  }
+]

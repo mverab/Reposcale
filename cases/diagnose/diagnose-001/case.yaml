@@ -1,0 +1,20 @@
+id: "diagnose-001"
+track: "diagnose"
+title: "Incomplete task management CLI"
+description: "A Python CLI for task management with partial implementation. Authentication module is defined but never wired into the app. Database migrations are referenced in README but do not exist. Tests cover only the tasks module."
+case_type: "mvp_incomplete"
+difficulty: "medium"
+tags: ["python", "cli", "partial-implementation", "sqlite"]
+repo_source: "snapshot"
+supported_modes:
+  - prompt_only
+  - read_only_repo
+expected_sections:
+  - project_summary
+  - what_exists
+  - what_is_missing
+  - what_is_broken
+  - technical_debt
+  - recommendations
+created_at: "2025-01-15"
+version: "1.0"

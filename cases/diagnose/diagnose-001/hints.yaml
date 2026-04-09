@@ -1,0 +1,19 @@
+known_gaps:
+  - "auth.py defines authenticate() and hash_password() but is never imported by main.py or tasks.py"
+  - "README references 'python manage.py migrate' but no manage.py or migrations/ exist"
+  - "tests/test_tasks.py exists but tests/test_users.py and tests/test_auth.py do not"
+  - "requirements.txt lists 'flask' but no web interface exists — only CLI"
+  - "config.py references DATABASE_URL env var but no .env.example or documentation exists"
+original_intent: "A CLI-based task management tool with user accounts, authentication, and persistent storage via SQLite"
+key_files:
+  - "src/main.py"
+  - "src/tasks.py"
+  - "src/users.py"
+  - "src/auth.py"
+  - "src/config.py"
+  - "README.md"
+  - "requirements.txt"
+expected_difficulty_areas:
+  - "Distinguishing placeholder code in auth.py from real implementation"
+  - "Noticing that README describes migration workflow that does not exist"
+  - "Detecting the flask dependency that serves no purpose"
