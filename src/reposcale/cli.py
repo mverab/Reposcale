@@ -86,12 +86,60 @@ def run_eval(case_path: Path, model: str, dry_run: bool, run_id: str | None):
             console.print(f"[green]✓[/green] Response saved → results/{run_id}/")
 
 
+# --- batch ---
+
+@cli.command()
+@click.argument("cases_dir", type=click.Path(exists=True, path_type=Path))
+@click.option("--model", required=True, help="LLM model identifier")
+@click.option("--run-id", default=None, help="Custom run ID. Auto-generated if omitted.")
+@click.option("--dry-run", is_flag=True, help="Print assembled prompt without calling the model")
+def batch(cases_dir: Path, model: str, run_id: str | None, dry_run: bool):
+    """Run evaluation on all valid case packs under a directory."""
+    from reposcale.runner import run_single, generate_run_id
+    from reposcale.validate import validate_case_pack
+
+    if run_id is None:
+        run_id = generate_run_id(model)
+
+    case_dirs = sorted(
+        d for d in cases_dir.rglob("case.yaml")
+    )
+
+    if not case_dirs:
+        console.print("[red]No case packs found.[/red]")
+        raise SystemExit(1)
+
+    console.print(f"[bold]Batch run:[/bold] {len(case_dirs)} cases | model={model} | run_id={run_id}")
+
+    ok, skipped = 0, 0
+    for case_yaml in case_dirs:
+        case_dir = case_yaml.parent
+        case_name = case_dir.name
+
+        result = validate_case_pack(case_dir)
+        if result.errors:
+            console.print(f"  [yellow]⚠[/yellow] {case_name} — skipped (validation errors)")
+            skipped += 1
+            continue
+
+        try:
+            run_single(case_dir, model, run_id, dry_run)
+            console.print(f"  [green]✓[/green] {case_name}")
+            ok += 1
+        except Exception as e:
+            console.print(f"  [red]✗[/red] {case_name} — {e}")
+            skipped += 1
+
+    console.print(f"\n[green]✓[/green] {ok} completed, {skipped} skipped → results/{run_id}/")
+
+
 # --- score ---
 
 @cli.command()
 @click.argument("run_dir", type=click.Path(exists=True, path_type=Path))
 @click.option("--judge-model", default=None, help="LLM model for judge scoring. Skip judge if omitted.")
-def score(run_dir: Path, judge_model: str | None):
+@click.option("--repeat", default=1, type=int, help="Run judge N times for stability measurement.")
+def score(run_dir: Path, judge_model: str | None, repeat: int):
     """Score responses in a run directory."""
     import json
     import yaml
@@ -119,9 +167,20 @@ def score(run_dir: Path, judge_model: str | None):
             case_data = {"id": case_id, "track": track}
 
         skip_judge = judge_model is None
-        evaluation = score_response(case_data, response, judge_model=judge_model, skip_judge=skip_judge)
+        evaluation = score_response(
+            case_data, response,
+            judge_model=judge_model, skip_judge=skip_judge, repeat=repeat,
+        )
         persist_evaluation(evaluation, run_id, case_id)
-        console.print(f"  [green]✓[/green] {case_id} — composite={evaluation['composite_score']:.3f}")
+
+        stability = evaluation.get("layers", {}).get("llm_judge", {}).get("stability", {})
+        unstable = stability.get("unstable_dimensions", [])
+        score_text = f"composite={evaluation['composite_score']:.3f}"
+        if stability:
+            score_text += f" (±{stability['stddev']:.3f}, {stability['runs']}runs)"
+        console.print(f"  [green]✓[/green] {case_id} — {score_text}")
+        if unstable:
+            console.print(f"    [yellow]⚠ Unstable dimensions: {', '.join(unstable)}[/yellow]")
 
     console.print(f"\n[green]✓[/green] Scored {len(response_files)} responses → results/{run_id}/")
 
@@ -169,3 +228,20 @@ def summary(run_dir: Path, as_json: bool):
 
     data = run_summary(run_dir)
     print_summary(data, as_json=as_json)
+
+
+# --- compare ---
+
+@cli.command()
+@click.argument("run_dirs", nargs=-1, required=True, type=click.Path(exists=True, path_type=Path))
+@click.option("--json", "as_json", is_flag=True, help="Output comparison as JSON")
+def compare(run_dirs: tuple[Path, ...], as_json: bool):
+    """Compare results across multiple runs."""
+    from reposcale.summary import multi_run_summary, print_multi_run
+
+    if len(run_dirs) < 2:
+        console.print("[red]Need at least 2 run directories to compare.[/red]")
+        raise SystemExit(1)
+
+    data = multi_run_summary(list(run_dirs))
+    print_multi_run(data, as_json=as_json)

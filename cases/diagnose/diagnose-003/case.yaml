@@ -1,0 +1,18 @@
+id: diagnose-003
+track: diagnose
+title: CSV data processor with off-by-one and encoding bugs
+description: >
+  A single-file Python script that reads CSV files, filters rows, and writes
+  summaries. Contains an off-by-one error in pagination, mishandles Unicode
+  in filenames, and has an unclosed file handle.
+case_type: single_file_buggy
+difficulty: easy
+repo_source: snapshot
+supported_modes:
+  - prompt_only
+expected_sections:
+  - project_summary
+  - what_works
+  - what_is_broken
+  - recommendations
+version: "1.0"

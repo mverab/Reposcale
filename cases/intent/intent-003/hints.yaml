@@ -1,0 +1,16 @@
+known_gaps:
+  - v2 plugin system was never completed — only 1 of 4 planned plugins exists
+  - v1 monolithic renderer is still the one actually used in production scripts
+  - README describes v2 features (plugin marketplace, theme engine) that don't exist
+  - Migration script from v1 to v2 is incomplete and untested
+  - Both v1 and v2 have separate config formats that conflict
+original_intent: >
+  Started as simple static site generator (v1). Rewrite to plugin-based
+  architecture (v2) was started to support themes and extensions but
+  was abandoned due to scope creep. Team never decided to commit to v2
+  or revert to v1.
+key_files:
+  - src/v1/renderer.py
+  - src/v2/plugin_loader.py
+  - scripts/build.sh
+  - README.md

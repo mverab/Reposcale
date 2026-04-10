@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import statistics
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -57,18 +58,48 @@ def _compute_composite(evaluation: dict) -> float:
     return round(weighted_sum / total_weight, 3)
 
 
+def _compute_stability(runs: list[dict]) -> dict:
+    if len(runs) < 2:
+        return {}
+
+    composites = [r.get("overall_score", 0.0) for r in runs]
+    all_dims: dict[str, list[float]] = {}
+    for r in runs:
+        for dim, val in r.get("dimension_scores", {}).items():
+            all_dims.setdefault(dim, []).append(val)
+
+    per_dim = {}
+    unstable = []
+    for dim, vals in all_dims.items():
+        m = statistics.mean(vals)
+        s = statistics.stdev(vals) if len(vals) > 1 else 0.0
+        per_dim[dim] = {"mean": round(m, 3), "stddev": round(s, 3)}
+        if s > 0.1:
+            unstable.append(dim)
+
+    return {
+        "runs": len(runs),
+        "mean": round(statistics.mean(composites), 3),
+        "stddev": round(statistics.stdev(composites) if len(composites) > 1 else 0.0, 3),
+        "per_dimension": per_dim,
+        "unstable_dimensions": unstable,
+    }
+
+
 def score_response(
     case: dict,
     response: dict,
     judge_model: str | None = None,
     skip_judge: bool = False,
+    repeat: int = 1,
 ) -> dict:
     scorers: list[Scorer] = [
         StructuralScorer(),
         HeuristicScorer(),
     ]
 
-    if not skip_judge and judge_model:
+    use_judge = not skip_judge and judge_model
+    if use_judge:
         scorers.append(LLMJudgeScorer(judge_model=judge_model))
 
     evaluation = {
@@ -87,6 +118,25 @@ def score_response(
         except Exception as e:
             logger.error(f"Scorer '{scorer.name}' failed: {e}")
             evaluation["layers"][scorer.name] = {"notes": f"Scorer failed: {e}"}
+
+    if use_judge and repeat > 1:
+        judge = LLMJudgeScorer(judge_model=judge_model)
+        judge_runs = [evaluation.get("layers", {}).get("llm_judge", {})]
+        for _ in range(repeat - 1):
+            try:
+                extra = judge.score(case, response)
+                judge_runs.append(extra.get("layers", {}).get("llm_judge", {}))
+            except Exception as e:
+                logger.warning(f"Judge repeat run failed: {e}")
+
+        stability = _compute_stability(judge_runs)
+        if stability:
+            evaluation["layers"]["llm_judge"]["stability"] = stability
+            if stability.get("per_dimension"):
+                evaluation["layers"]["llm_judge"]["dimension_scores"] = {
+                    dim: vals["mean"]
+                    for dim, vals in stability["per_dimension"].items()
+                }
 
     judge_scores = evaluation.get("layers", {}).get("llm_judge", {}).get("dimension_scores", {})
     if judge_scores:

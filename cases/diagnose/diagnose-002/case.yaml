@@ -1,0 +1,18 @@
+id: diagnose-002
+track: diagnose
+title: E-commerce cart service with missing integration tests
+description: >
+  A multi-module e-commerce backend with cart, inventory, and payment modules.
+  Unit tests exist per module but no integration tests verify cross-module
+  interactions. Payment webhook handler silently drops errors.
+case_type: mvp_incomplete
+difficulty: medium
+repo_source: snapshot
+supported_modes:
+  - prompt_only
+expected_sections:
+  - project_summary
+  - what_works
+  - what_is_broken
+  - recommendations
+version: "1.0"

@@ -1,0 +1,14 @@
+known_gaps:
+  - Session auth code still active alongside JWT — no clear canonical path
+  - /api/profile uses sessions while /api/data uses JWT
+  - Tests import both session fixtures and JWT helpers inconsistently
+  - Config has both SESSION_SECRET and JWT_SECRET — unclear which is used
+original_intent: >
+  Started as session-based REST API for internal tool. Pivoted to JWT when
+  mobile client was added. Intent was to fully migrate to JWT but session
+  code was never removed.
+key_files:
+  - app/auth_session.py
+  - app/auth_jwt.py
+  - app/routes.py
+  - tests/test_auth.py

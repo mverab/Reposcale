@@ -1,0 +1,15 @@
+repo/
+├── src/
+│   ├── v1/
+│   │   ├── renderer.py
+│   │   └── config.py
+│   └── v2/
+│       ├── plugin_loader.py
+│       ├── theme_engine.py
+│       └── config.py
+├── scripts/
+│   ├── build.sh
+│   └── migrate_v1_to_v2.py
+├── plugins/
+│   └── markdown_plugin.py
+└── README.md

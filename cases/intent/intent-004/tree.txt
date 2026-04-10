@@ -1,0 +1,6 @@
+repo/
+├── src/
+│   └── weather.py
+├── tests/
+│   └── test_weather.py
+└── README.md

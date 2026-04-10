@@ -1,0 +1,19 @@
+id: plan-004
+track: plan
+title: Well-structured Flask app needing CI/CD and monitoring
+description: >
+  A clean Flask API with proper separation of concerns, good test coverage,
+  and a Dockerfile. However, it has no CI/CD pipeline, no health monitoring,
+  no structured logging, and no deployment automation. The code quality is
+  high — what's missing is operational infrastructure.
+case_type: needs_ops_layer
+difficulty: easy
+repo_source: snapshot
+supported_modes:
+  - prompt_only
+expected_sections:
+  - project_summary
+  - bottlenecks
+  - scaling_plan
+  - migration_steps
+version: "1.0"

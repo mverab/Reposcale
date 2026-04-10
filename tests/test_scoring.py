@@ -1,6 +1,6 @@
 """Tests for RepoScale scoring layers."""
 
-from reposcale.scoring.coordinator import score_response
+from reposcale.scoring.coordinator import score_response, _compute_stability
 from reposcale.scoring.heuristic import HeuristicScorer
 from reposcale.scoring.structural import StructuralScorer
 
@@ -74,3 +74,36 @@ def test_score_response_merges_layers_without_judge():
     assert "heuristic" in result["layers"]
     assert result["scores"] == {}
     assert result["composite_score"] == 0.0
+
+
+def test_stability_computation_with_consistent_runs():
+    runs = [
+        {"overall_score": 0.8, "dimension_scores": {"project_understanding": 0.9, "evidence_grounding": 0.7}},
+        {"overall_score": 0.8, "dimension_scores": {"project_understanding": 0.9, "evidence_grounding": 0.7}},
+        {"overall_score": 0.8, "dimension_scores": {"project_understanding": 0.9, "evidence_grounding": 0.7}},
+    ]
+    result = _compute_stability(runs)
+
+    assert result["runs"] == 3
+    assert result["mean"] == 0.8
+    assert result["stddev"] == 0.0
+    assert result["unstable_dimensions"] == []
+    assert result["per_dimension"]["project_understanding"]["stddev"] == 0.0
+
+
+def test_stability_flags_unstable_dimensions():
+    runs = [
+        {"overall_score": 0.5, "dimension_scores": {"actionability": 0.3}},
+        {"overall_score": 0.9, "dimension_scores": {"actionability": 0.9}},
+        {"overall_score": 0.7, "dimension_scores": {"actionability": 0.6}},
+    ]
+    result = _compute_stability(runs)
+
+    assert result["runs"] == 3
+    assert "actionability" in result["unstable_dimensions"]
+    assert result["per_dimension"]["actionability"]["stddev"] > 0.1
+
+
+def test_stability_returns_empty_for_single_run():
+    result = _compute_stability([{"overall_score": 0.8, "dimension_scores": {}}])
+    assert result == {}

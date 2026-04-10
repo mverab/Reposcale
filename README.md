@@ -88,7 +88,7 @@ results/        evaluation outputs (gitignored)
 
 ## Project status
 
-RepoScale is in **Phase 1 — MVP pipeline**.
+RepoScale is in **Alpha** — core pipeline complete, corpus of 12 cases ready for baseline evaluation.
 
 Current goals:
 - [x] Define the capability model
@@ -96,8 +96,13 @@ Current goals:
 - [x] Define base schemas (case, response, evaluation)
 - [x] Ship validation, runner, scoring, and summary pipeline
 - [x] Seed cases for Diagnose, Intent, and Plan tracks
-- [ ] Release the first 10–15 curated cases
-- [ ] Establish baseline results across models
+- [x] Expand corpus to 12 cases across 3 tracks and 3 difficulty levels
+- [x] CI pipeline with GitHub Actions
+- [x] Judge stability measurement with repeat scoring
+- [x] Batch command for running all cases
+- [x] Multi-run comparison command
+- [ ] Establish baseline results across models (GPT-4o, Claude)
+- [ ] Add Extend, Implement, and Agent tracks
 
 ## Quickstart
 
@@ -105,20 +110,26 @@ Current goals:
 # Install
 pip install -e .
 
-# Validate case packs
-reposcale validate cases/diagnose/diagnose-001/
+# Validate all case packs
+reposcale validate cases/diagnose/diagnose-001/ cases/intent/intent-001/
 
-# Run evaluation (dry-run — prints the assembled prompt)
+# Run a single case (dry-run — prints the assembled prompt)
 reposcale run cases/diagnose/diagnose-001/ --model gpt-4o --dry-run
 
-# Run evaluation (requires LLM API key, e.g. OPENAI_API_KEY)
-reposcale run cases/diagnose/diagnose-001/ --model gpt-4o
+# Run all cases in batch (requires LLM API key, e.g. OPENAI_API_KEY)
+reposcale batch cases/ --model gpt-4o
 
 # Score responses (structural + heuristic; add --judge-model for LLM judge)
-reposcale score results/<run-id>/
+reposcale score results/<run-id>/ --judge-model gpt-4o
+
+# Score with stability measurement (runs judge 3 times)
+reposcale score results/<run-id>/ --judge-model gpt-4o --repeat 3
 
 # View summary
 reposcale summary results/<run-id>/
+
+# Compare multiple runs
+reposcale compare results/<run-a>/ results/<run-b>/
 ```
 
 ## Contributing

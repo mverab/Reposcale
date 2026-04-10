@@ -1,0 +1,14 @@
+known_gaps:
+  - No CI/CD pipeline (Dockerfile exists but no orchestration)
+  - No health check endpoint
+  - No structured logging (uses print statements)
+  - No monitoring or alerting setup
+  - No load balancing or horizontal scaling config
+original_intent: >
+  Clean API service for a notes app. Code is production-quality but
+  lacks the operational layer needed for reliable deployment and monitoring.
+key_files:
+  - src/app.py
+  - src/routes.py
+  - tests/test_routes.py
+  - Dockerfile

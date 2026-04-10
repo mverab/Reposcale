@@ -1,0 +1,19 @@
+id: plan-002
+track: plan
+title: Django-like monolith that needs service extraction for scaling
+description: >
+  A monolithic web application handling users, orders, notifications, and
+  reporting in a single codebase. All modules share one database with tight
+  coupling. The app works but response times degrade under load because
+  notification sends and report generation block request handlers.
+case_type: functional_not_scalable
+difficulty: medium
+repo_source: snapshot
+supported_modes:
+  - prompt_only
+expected_sections:
+  - project_summary
+  - bottlenecks
+  - scaling_plan
+  - migration_steps
+version: "1.0"

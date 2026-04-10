@@ -29,7 +29,7 @@
     },
     "case_type": {
       "type": "string",
-      "enum": ["mvp_incomplete", "divergent_beta", "inflated_scaffold", "functional_not_scalable", "eroded_repo"],
+      "enum": ["mvp_incomplete", "divergent_beta", "inflated_scaffold", "functional_not_scalable", "eroded_repo", "single_file_buggy", "multi_module_tangled", "abandoned_rewrite", "readme_code_divergence", "multi_language_unscalable", "needs_ops_layer"],
       "description": "Category of the case. See docs/dataset_format.md for definitions."
     },
     "difficulty": {

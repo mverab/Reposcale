@@ -5,7 +5,7 @@ Thank you for your interest in contributing to RepoScale.
 ## Ways to contribute
 
 ### Case curation
-The most impactful contribution right now is **curating benchmark cases** — real repositories that test specific aspects of repo continuation intelligence. See `docs/dataset_format.md` for the case pack format and `cases/example/` for a reference.
+The most impactful contribution right now is **curating benchmark cases** — real repositories that test specific aspects of repo continuation intelligence. See `docs/case-authoring.md` for the complete guide, `docs/dataset_format.md` for the case pack format, and `cases/CORPUS.md` for the current inventory.
 
 ### Rubric and scoring
 Help define and refine evaluation criteria. See `docs/scoring.md` for the current scoring model.
@@ -14,7 +14,7 @@ Help define and refine evaluation criteria. See `docs/scoring.md` for the curren
 Improve task prompts in `prompts/` or the LLM judge protocol in `prompts/judge.md`.
 
 ### Tooling
-Improve `scripts/validate_case_pack.py` and `scripts/run_eval.py`, or build new runners and scorers.
+Improve the CLI (`src/reposcale/cli.py`), scoring layers, or build new runners and scorers.
 
 ## Development setup
 
@@ -24,10 +24,13 @@ git clone https://github.com/YOUR_ORG/reposcale.git
 cd reposcale
 
 # Install in development mode
-pip install -e ".[dev]"
+pip install -e .
 
-# Validate an example case
-python scripts/validate_case_pack.py cases/example/
+# Run tests
+python -m pytest tests/ -v
+
+# Validate all case packs
+reposcale validate cases/diagnose/diagnose-001/ cases/intent/intent-001/
 ```
 
 ## Conventions
@@ -39,10 +42,11 @@ python scripts/validate_case_pack.py cases/example/
 ## Submitting a case
 
 1. Fork the repo
-2. Create a new directory under `cases/<track>/` (e.g., `cases/diagnose/my-case/`)
-3. Include all required fields from the case schema
-4. Run `python scripts/validate_case_pack.py cases/<track>/my-case/`
-5. Submit a PR with a brief description of what the case tests
+2. Read `docs/case-authoring.md` for the complete guide
+3. Create a new directory under `cases/<track>/` (e.g., `cases/diagnose/diagnose-005/`)
+4. Include `case.yaml`, `hints.yaml`, `tree.txt`, and `repo/` with real code
+5. Run `reposcale validate cases/<track>/diagnose-005/`
+6. Submit a PR with a brief description of what the case tests
 
 ## Code of conduct
 

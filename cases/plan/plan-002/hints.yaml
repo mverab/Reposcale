@@ -1,0 +1,15 @@
+known_gaps:
+  - Notifications sent synchronously in request handlers
+  - Report generation blocks API responses (can take 30+ seconds)
+  - All models share single database with no read replicas
+  - No service boundaries — order logic directly queries user tables
+  - No message queue or async processing
+original_intent: >
+  Web application for order management with email notifications and
+  reporting. Built as monolith for speed. Needs decomposition as
+  traffic grows beyond single-server capacity.
+key_files:
+  - app/api/orders.py
+  - app/services/notifications.py
+  - app/services/reports.py
+  - app/models/order.py

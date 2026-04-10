@@ -1,0 +1,14 @@
+repo/
+├── backend/
+│   ├── server.py
+│   ├── db.py
+│   └── requirements.txt
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx
+│   │   └── api.js
+│   ├── package.json
+│   └── index.html
+├── deploy/
+│   └── deploy.sh
+└── README.md

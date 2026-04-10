@@ -1,0 +1,18 @@
+id: intent-004
+track: intent
+title: Weather CLI tool where README describes features not yet implemented
+description: >
+  A simple weather CLI that fetches and displays weather data. The README
+  promises caching, multiple providers, and chart output, but the code
+  only implements a single-provider fetch with plain text output.
+case_type: readme_code_divergence
+difficulty: easy
+repo_source: snapshot
+supported_modes:
+  - prompt_only
+expected_sections:
+  - project_summary
+  - original_intent
+  - current_state
+  - drift_analysis
+version: "1.0"

@@ -1,0 +1,19 @@
+id: intent-002
+track: intent
+title: REST API that pivoted from session-based to JWT authentication
+description: >
+  A Flask-like REST API originally built with session cookies. Midway through
+  development, the team pivoted to JWT tokens. Session code remains alongside
+  JWT code, creating confusion about which auth strategy is canonical.
+  Some endpoints use sessions, others use JWT, and tests mix both.
+case_type: divergent_beta
+difficulty: medium
+repo_source: snapshot
+supported_modes:
+  - prompt_only
+expected_sections:
+  - project_summary
+  - original_intent
+  - current_state
+  - drift_analysis
+version: "1.0"

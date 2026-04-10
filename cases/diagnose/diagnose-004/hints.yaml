@@ -1,0 +1,15 @@
+known_gaps:
+  - Three inconsistent error handling strategies across modules
+  - Tests assert on internal implementation details rather than behavior
+  - Dead code from removed "priority lanes" feature still referenced in comments
+  - Worker retry logic has infinite loop on certain error types
+  - API module validates input but core module re-validates differently
+original_intent: >
+  Reliable background job processing system: API accepts jobs, core schedules
+  them, workers execute. Originally had priority lanes feature that was removed
+  but not fully cleaned up.
+key_files:
+  - api/routes.py
+  - core/scheduler.py
+  - workers/executor.py
+  - tests/test_scheduler.py

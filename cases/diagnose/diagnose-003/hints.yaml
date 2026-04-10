@@ -1,0 +1,9 @@
+known_gaps:
+  - Off-by-one in paginate() skips the last page
+  - open() call without encoding param fails on non-ASCII filenames
+  - File handle in write_summary() is never closed
+original_intent: >
+  Simple CLI tool to process CSV files — filter rows by column value,
+  paginate output, and write summary statistics.
+key_files:
+  - csv_processor.py
