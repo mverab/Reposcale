@@ -23,4 +23,4 @@ jobs:
         run: python -m pytest tests/ -v
 
       - name: Validate case packs
-        run: reposcale validate cases/*/
+        run: reposcale validate cases/*/*/
