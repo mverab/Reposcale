@@ -56,7 +56,69 @@
 
 4. **Section heading compliance is imperfect.** Both models merge `what_is_broken` into other sections on diagnose. The structural scorer catches this, which validates its utility.
 
-5. **Composite score is 0.0 for all.** This is expected — composite requires LLM judge dimension scores, which were not run in this baseline. Next step: LLM judge calibration.
+## Results — LLM Judge (judge: gpt-4o, temperature 0.1)
+
+> **⚠ Evaluator-leaky comparison.** gpt-4o serves as both candidate and judge here.
+> The gpt-4o column is effectively self-evaluated and should **not** be compared
+> directly against gpt-4o-mini. These scores are valid for internal calibration
+> (verifying the judge pipeline works) but not for neutral benchmarking.
+> For a fair cross-model comparison, use an independent judge model.
+
+### Composite scores
+
+| Case | Track | gpt-4o-mini | gpt-4o |
+|------|-------|-------------|--------|
+| diagnose-001 | diagnose | **0.900** | **0.905** |
+| intent-001 | intent | **0.880** | 0.745 |
+| plan-001 | plan | 0.750 | 0.700 |
+| **Mean** | | **0.843** | **0.783** |
+
+### Dimension breakdown — gpt-4o-mini
+
+| Dimension | diagnose-001 | intent-001 | plan-001 |
+|-----------|:---:|:---:|:---:|
+| project_understanding | 1.0 | 1.0 | 1.0 |
+| evidence_grounding | 0.8 | 1.0 | 0.5 |
+| intent_reconstruction | 1.0 | 1.0 | 1.0 |
+| gap_detection | 0.8 | 0.8 | 1.0 |
+| useful_creativity | 0.8 | 0.8 | 0.5 |
+| prioritization | 1.0 | 0.7 | 1.0 |
+| architectural_coherence | 0.8 | 0.9 | 0.5 |
+| actionability | 1.0 | 0.8 | 0.5 |
+
+### Dimension breakdown — gpt-4o
+
+| Dimension | diagnose-001 | intent-001 | plan-001 |
+|-----------|:---:|:---:|:---:|
+| project_understanding | 1.0 | 0.8 | 1.0 |
+| evidence_grounding | 0.8 | 0.8 | 0.5 |
+| intent_reconstruction | 1.0 | 0.9 | 0.5 |
+| gap_detection | 1.0 | 0.6 | 1.0 |
+| useful_creativity | 0.8 | 0.7 | 0.5 |
+| prioritization | 1.0 | 0.7 | 0.5 |
+| architectural_coherence | 0.7 | 0.8 | 1.0 |
+| actionability | 0.9 | 0.7 | 0.5 |
+
+### Hallucinations
+
+| Model | diagnose-001 | intent-001 | plan-001 |
+|-------|:---:|:---:|:---:|
+| gpt-4o-mini | 0 | 0 | 0 |
+| gpt-4o | 0 | **1** | 0 |
+
+## Calibration observations
+
+1. **gpt-4o-mini outperforms gpt-4o on average** (0.843 vs 0.783). This is counterintuitive but consistent: the smaller model produces more focused, less overengineered responses.
+
+2. **plan-001 is the hardest case.** Both models score lowest here — evidence_grounding and actionability drop to 0.5, indicating difficulty translating understanding into concrete scaling plans.
+
+3. **gpt-4o hallucinates once on intent-001.** The judge detected a claim about non-existent functionality. Zero hallucinations from gpt-4o-mini.
+
+4. **project_understanding is near-ceiling.** Both models score 0.8–1.0 consistently. This dimension may not differentiate well at scale — worth considering raising the bar.
+
+5. **evidence_grounding and actionability show the most variance.** These are the dimensions most worth monitoring across new models and cases.
+
+6. **Judge consistency is reasonable.** Scores correlate with heuristic metrics (higher file ref density → higher evidence_grounding). This suggests the judge and heuristics are measuring related but not identical constructs.
 
 ## Reproduction
 
@@ -68,13 +130,13 @@ export OPENAI_API_KEY=<your-key>
 reposcale run cases/diagnose/diagnose-001/ --model gpt-4o-mini --run-id baseline-v0-gpt4o-mini
 reposcale run cases/intent/intent-001/ --model gpt-4o-mini --run-id baseline-v0-gpt4o-mini
 reposcale run cases/plan/plan-001/ --model gpt-4o-mini --run-id baseline-v0-gpt4o-mini
-reposcale score results/baseline-v0-gpt4o-mini/
+reposcale score results/baseline-v0-gpt4o-mini/ --judge-model gpt-4o
 
 # gpt-4o
 reposcale run cases/diagnose/diagnose-001/ --model gpt-4o --run-id baseline-v0-gpt4o
 reposcale run cases/intent/intent-001/ --model gpt-4o --run-id baseline-v0-gpt4o
 reposcale run cases/plan/plan-001/ --model gpt-4o --run-id baseline-v0-gpt4o
-reposcale score results/baseline-v0-gpt4o/
+reposcale score results/baseline-v0-gpt4o/ --judge-model gpt-4o
 
 # View
 reposcale summary results/baseline-v0-gpt4o-mini/
@@ -83,6 +145,6 @@ reposcale summary results/baseline-v0-gpt4o/
 
 ## Next steps
 
-1. **LLM judge calibration** — Run `reposcale score --judge-model gpt-4o` to get dimension scores and composite.
-2. **Cross-provider** — Add Anthropic (claude-sonnet) and Google (gemini) when API keys are available.
-3. **Expand corpus** — Add 7–12 more cases, then re-run baselines.
+1. **Cross-provider** — Add Anthropic (claude-sonnet) and Google (gemini) when API keys are available.
+2. **Expand corpus** — Add 7–12 more cases, then re-run baselines.
+3. **Judge stability** — Run same evaluations 3× to measure score variance.
