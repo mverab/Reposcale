@@ -45,12 +45,12 @@ Add these topics in the GitHub repository settings:
 
 Recommended repo social preview asset:
 
-- `docs/assets/social-preview.png`
+- `docs/assets/social-preview.jpg`
 
 Suggested setup:
 1. Open repository settings.
 2. Go to General -> Social preview.
-3. Upload `docs/assets/social-preview.png`.
+3. Upload `docs/assets/social-preview.jpg`.
 4. Keep `docs/assets/repo-visual-source.png` as the editable source image for future iterations.
 
 Recommended alt text:

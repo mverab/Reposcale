@@ -15,7 +15,7 @@ RepoScale ships a reproducible CLI pipeline, a 12-case curated corpus, judge sta
 
 [**Corpus**](cases/CORPUS.md) • [**Baseline**](docs/baseline-v0.md) • [**Case Authoring**](docs/case-authoring.md) • [**Launch Kit**](docs/launch-kit.md) • [**Changelog**](CHANGELOG.md)
 
-![RepoScale hero](docs/assets/social-preview.png)
+![RepoScale hero](docs/assets/social-preview.jpg)
 
 ## What is RepoScale?
 
