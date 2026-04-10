@@ -1,0 +1,13 @@
+known_gaps:
+  - No integration tests for cart-to-payment flow
+  - Payment webhook handler catches and discards all exceptions
+  - Inventory decrement is not atomic (race condition under concurrent orders)
+  - No retry logic for failed payment callbacks
+original_intent: >
+  Full e-commerce cart service handling cart management, inventory checks,
+  and payment processing with Stripe-like webhook integration.
+key_files:
+  - src/cart.py
+  - src/payment.py
+  - src/inventory.py
+  - tests/test_cart.py

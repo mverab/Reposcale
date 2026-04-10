@@ -1,0 +1,19 @@
+id: plan-003
+track: plan
+title: Multi-language platform with manual deployment and no observability
+description: >
+  A platform with a Python backend, React frontend, and shell-based deployment
+  scripts. No containerization, no CI/CD, no health checks, no logging
+  aggregation. Backend talks to PostgreSQL directly with raw SQL.
+  Deployment is a sequence of rsync commands in a bash script.
+case_type: multi_language_unscalable
+difficulty: hard
+repo_source: snapshot
+supported_modes:
+  - prompt_only
+expected_sections:
+  - project_summary
+  - bottlenecks
+  - scaling_plan
+  - migration_steps
+version: "1.0"

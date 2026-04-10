@@ -1,0 +1,19 @@
+id: intent-003
+track: intent
+title: Content management system with multiple abandoned rewrites
+description: >
+  A CMS that went through two major rewrite attempts. v1 was a monolithic
+  renderer, v2 tried a plugin architecture that was abandoned halfway.
+  Both codebases coexist. Scripts reference both versions. The README
+  describes v2 features that were never completed.
+case_type: abandoned_rewrite
+difficulty: hard
+repo_source: snapshot
+supported_modes:
+  - prompt_only
+expected_sections:
+  - project_summary
+  - original_intent
+  - current_state
+  - drift_analysis
+version: "1.0"

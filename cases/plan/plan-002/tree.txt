@@ -1,0 +1,18 @@
+repo/
+├── app/
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── orders.py
+│   │   └── users.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── order.py
+│   │   └── user.py
+│   └── services/
+│       ├── __init__.py
+│       ├── notifications.py
+│       └── reports.py
+├── tests/
+│   └── test_orders.py
+├── requirements.txt
+└── README.md

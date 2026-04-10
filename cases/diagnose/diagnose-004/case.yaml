@@ -1,0 +1,19 @@
+id: diagnose-004
+track: diagnose
+title: Background job system with conflicting error handling patterns
+description: >
+  A task queue system with API ingestion, core scheduling, and worker execution
+  modules. Each module uses a different error handling strategy (exceptions,
+  error codes, silent retry). Tests exist but test the wrong contracts.
+  Dead code from a removed feature clutters the codebase.
+case_type: multi_module_tangled
+difficulty: hard
+repo_source: snapshot
+supported_modes:
+  - prompt_only
+expected_sections:
+  - project_summary
+  - what_works
+  - what_is_broken
+  - recommendations
+version: "1.0"

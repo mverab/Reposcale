@@ -1,0 +1,18 @@
+known_gaps:
+  - No containerization (Docker/K8s) — deployed via rsync
+  - No CI/CD pipeline — manual deployment only
+  - No health checks or readiness probes
+  - No logging aggregation — logs only on disk per server
+  - Raw SQL queries without connection pooling or ORM
+  - Frontend build is manual (npm run build then rsync)
+  - No environment variable management — secrets in deploy script
+  - No database migration strategy
+original_intent: >
+  Full-stack platform for internal team. Backend serves API, frontend is
+  a React SPA. Grew organically without DevOps practices. Now needs
+  production-grade infrastructure for external launch.
+key_files:
+  - backend/server.py
+  - backend/db.py
+  - frontend/src/App.jsx
+  - deploy/deploy.sh

@@ -1,0 +1,10 @@
+repo/
+├── src/
+│   ├── cart.py
+│   ├── inventory.py
+│   └── payment.py
+├── tests/
+│   ├── test_cart.py
+│   └── test_inventory.py
+├── requirements.txt
+└── README.md

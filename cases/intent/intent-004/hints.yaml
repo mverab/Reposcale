@@ -1,0 +1,11 @@
+known_gaps:
+  - README promises caching but no cache code exists
+  - README lists 3 weather providers but only OpenWeatherMap is implemented
+  - README mentions chart output but only plain text is available
+  - docs/ folder referenced in README doesn't exist
+original_intent: >
+  Ambitious weather CLI planned with multi-provider support, local caching,
+  and terminal chart rendering. Only basic single-provider fetch was completed.
+key_files:
+  - src/weather.py
+  - README.md
