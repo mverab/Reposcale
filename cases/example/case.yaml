@@ -9,7 +9,7 @@ repo_source: "snapshot"
 supported_modes:
   - prompt_only
   - read_only_repo
-supported_sections:
+expected_sections:
   - project_summary
   - what_exists
   - what_is_missing
