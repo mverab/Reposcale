@@ -86,6 +86,53 @@ def run_eval(case_path: Path, model: str, dry_run: bool, run_id: str | None):
             console.print(f"[green]✓[/green] Response saved → results/{run_id}/")
 
 
+# --- batch ---
+
+@cli.command()
+@click.argument("cases_dir", type=click.Path(exists=True, path_type=Path))
+@click.option("--model", required=True, help="LLM model identifier")
+@click.option("--run-id", default=None, help="Custom run ID. Auto-generated if omitted.")
+@click.option("--dry-run", is_flag=True, help="Print assembled prompt without calling the model")
+def batch(cases_dir: Path, model: str, run_id: str | None, dry_run: bool):
+    """Run evaluation on all valid case packs under a directory."""
+    from reposcale.runner import run_single, generate_run_id
+    from reposcale.validate import validate_case_pack
+
+    if run_id is None:
+        run_id = generate_run_id(model)
+
+    case_dirs = sorted(
+        d for d in cases_dir.rglob("case.yaml")
+    )
+
+    if not case_dirs:
+        console.print("[red]No case packs found.[/red]")
+        raise SystemExit(1)
+
+    console.print(f"[bold]Batch run:[/bold] {len(case_dirs)} cases | model={model} | run_id={run_id}")
+
+    ok, skipped = 0, 0
+    for case_yaml in case_dirs:
+        case_dir = case_yaml.parent
+        case_name = case_dir.name
+
+        result = validate_case_pack(case_dir)
+        if result.errors:
+            console.print(f"  [yellow]⚠[/yellow] {case_name} — skipped (validation errors)")
+            skipped += 1
+            continue
+
+        try:
+            run_single(case_dir, model, run_id, dry_run)
+            console.print(f"  [green]✓[/green] {case_name}")
+            ok += 1
+        except Exception as e:
+            console.print(f"  [red]✗[/red] {case_name} — {e}")
+            skipped += 1
+
+    console.print(f"\n[green]✓[/green] {ok} completed, {skipped} skipped → results/{run_id}/")
+
+
 # --- score ---
 
 @cli.command()
