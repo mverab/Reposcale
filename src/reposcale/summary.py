@@ -146,3 +146,78 @@ def print_summary(summary_data: dict, as_json: bool = False) -> None:
                 console.print(dim_table)
 
     console.print()
+
+
+def multi_run_summary(run_dirs: list[Path]) -> dict:
+    summaries = []
+    for rd in run_dirs:
+        summaries.append(run_summary(rd))
+
+    comparison = {
+        "runs": [],
+        "comparison_table": [],
+    }
+
+    for s in summaries:
+        comparison["runs"].append({
+            "run_id": s["run_id"],
+            "cases": s["cases"],
+            "overall_composite": s["overall_composite"],
+        })
+
+    all_case_ids: set[str] = set()
+    run_case_scores: dict[str, dict[str, float]] = {}
+
+    for rd, s in zip(run_dirs, summaries):
+        run_id = s["run_id"]
+        run_case_scores[run_id] = {}
+        for eval_path in sorted(rd.rglob("evaluation.json")):
+            ev = load_evaluation(eval_path)
+            cid = ev.get("case_id", "")
+            all_case_ids.add(cid)
+            run_case_scores[run_id][cid] = ev.get("composite_score", 0.0)
+
+    for cid in sorted(all_case_ids):
+        row = {"case_id": cid}
+        for s in summaries:
+            rid = s["run_id"]
+            score = run_case_scores.get(rid, {}).get(cid)
+            row[rid] = round(score, 3) if score is not None else None
+        comparison["comparison_table"].append(row)
+
+    return comparison
+
+
+def print_multi_run(comparison: dict, as_json: bool = False) -> None:
+    if as_json:
+        print(json.dumps(comparison, indent=2))
+        return
+
+    console = Console()
+
+    runs_table = Table(title="Multi-Run Overview")
+    runs_table.add_column("Run ID", style="cyan")
+    runs_table.add_column("Cases", justify="right")
+    runs_table.add_column("Composite", justify="right")
+
+    for r in comparison["runs"]:
+        runs_table.add_row(r["run_id"], str(r["cases"]), f"{r['overall_composite']:.3f}")
+    console.print(runs_table)
+
+    if comparison["comparison_table"]:
+        run_ids = [r["run_id"] for r in comparison["runs"]]
+        comp_table = Table(title="Per-Case Comparison")
+        comp_table.add_column("Case", style="cyan")
+        for rid in run_ids:
+            comp_table.add_column(rid, justify="right")
+
+        for row in comparison["comparison_table"]:
+            values = []
+            for rid in run_ids:
+                v = row.get(rid)
+                values.append(f"{v:.3f}" if v is not None else "—")
+            comp_table.add_row(row["case_id"], *values)
+
+        console.print(comp_table)
+
+    console.print()

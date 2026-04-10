@@ -228,3 +228,20 @@ def summary(run_dir: Path, as_json: bool):
 
     data = run_summary(run_dir)
     print_summary(data, as_json=as_json)
+
+
+# --- compare ---
+
+@cli.command()
+@click.argument("run_dirs", nargs=-1, required=True, type=click.Path(exists=True, path_type=Path))
+@click.option("--json", "as_json", is_flag=True, help="Output comparison as JSON")
+def compare(run_dirs: tuple[Path, ...], as_json: bool):
+    """Compare results across multiple runs."""
+    from reposcale.summary import multi_run_summary, print_multi_run
+
+    if len(run_dirs) < 2:
+        console.print("[red]Need at least 2 run directories to compare.[/red]")
+        raise SystemExit(1)
+
+    data = multi_run_summary(list(run_dirs))
+    print_multi_run(data, as_json=as_json)
