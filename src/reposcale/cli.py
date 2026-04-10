@@ -138,7 +138,8 @@ def batch(cases_dir: Path, model: str, run_id: str | None, dry_run: bool):
 @cli.command()
 @click.argument("run_dir", type=click.Path(exists=True, path_type=Path))
 @click.option("--judge-model", default=None, help="LLM model for judge scoring. Skip judge if omitted.")
-def score(run_dir: Path, judge_model: str | None):
+@click.option("--repeat", default=1, type=int, help="Run judge N times for stability measurement.")
+def score(run_dir: Path, judge_model: str | None, repeat: int):
     """Score responses in a run directory."""
     import json
     import yaml
@@ -166,9 +167,20 @@ def score(run_dir: Path, judge_model: str | None):
             case_data = {"id": case_id, "track": track}
 
         skip_judge = judge_model is None
-        evaluation = score_response(case_data, response, judge_model=judge_model, skip_judge=skip_judge)
+        evaluation = score_response(
+            case_data, response,
+            judge_model=judge_model, skip_judge=skip_judge, repeat=repeat,
+        )
         persist_evaluation(evaluation, run_id, case_id)
-        console.print(f"  [green]✓[/green] {case_id} — composite={evaluation['composite_score']:.3f}")
+
+        stability = evaluation.get("layers", {}).get("llm_judge", {}).get("stability", {})
+        unstable = stability.get("unstable_dimensions", [])
+        score_text = f"composite={evaluation['composite_score']:.3f}"
+        if stability:
+            score_text += f" (±{stability['stddev']:.3f}, {stability['runs']}runs)"
+        console.print(f"  [green]✓[/green] {case_id} — {score_text}")
+        if unstable:
+            console.print(f"    [yellow]⚠ Unstable dimensions: {', '.join(unstable)}[/yellow]")
 
     console.print(f"\n[green]✓[/green] Scored {len(response_files)} responses → results/{run_id}/")
 

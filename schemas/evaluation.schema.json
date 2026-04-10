@@ -79,6 +79,40 @@
             "dimension_scores": {
               "type": "object",
               "additionalProperties": { "$ref": "#/$defs/score" }
+            },
+            "hallucinations": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "strengths": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "weaknesses": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "stability": {
+              "type": "object",
+              "properties": {
+                "runs": { "type": "integer", "minimum": 2 },
+                "mean": { "type": "number" },
+                "stddev": { "type": "number" },
+                "per_dimension": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                      "mean": { "type": "number" },
+                      "stddev": { "type": "number" }
+                    }
+                  }
+                },
+                "unstable_dimensions": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                }
+              }
             }
           },
           "additionalProperties": false
